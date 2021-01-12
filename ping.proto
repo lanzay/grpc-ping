@@ -1,0 +1,25 @@
+syntax = "proto3";
+package main;
+
+service Pinger {
+  rpc Ping(PingMsg) returns (PongMsg) {}
+}
+
+enum msg_type {
+  Ping = 0;
+  Pong = 1;
+}
+
+message PingMsg {
+  int32 id = 1;
+  string tag = 2;
+  bytes payload = 3;
+  msg_type type = 4;
+}
+
+message PongMsg {
+  int32 id = 1;
+  string tag = 2;
+  bytes payload = 3;
+  msg_type type = 4;
+}
