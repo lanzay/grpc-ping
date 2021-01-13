@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"encoding/hex"
+	"fmt"
 	"github.com/golang/protobuf/proto"
 	"google.golang.org/grpc"
 	"log"
@@ -15,7 +17,7 @@ func client(srv string) {
 	ping := &PingMsg{
 		Id:      1,
 		Tag:     "My ping",
-		Payload: []byte("<script>alert(112233)</script>"),
+		Payload: []byte(PayLoad),
 		Type:    MsgType_Ping,
 	}
 
@@ -37,12 +39,19 @@ func client(srv string) {
 		pingData, _ := proto.Marshal(ping)
 		t1 := time.Now()
 		log.Println("[I] [CLIENT] ==>", ping.Id, ping.Type, ping.Tag, string(ping.Payload), string(pingData))
+		if PrintDump {
+			fmt.Println(hex.Dump(pingData))
+		}
+
 		pong, err := client.Ping(ctx, ping)
 		if err != nil {
 			panic(err)
 		}
 		pongData, _ := proto.Marshal(pong)
 		log.Println("[I] [CLIENT] <==", pong.Id, pong.Type, pong.Tag, string(pong.Payload), string(pongData))
+		if PrintDump {
+			fmt.Println(hex.Dump(pongData))
+		}
 		log.Println("[I] [CLIENT] APDEX", time.Since(t1))
 		ping.Id++
 		<-time.NewTimer(1 * time.Second).C
